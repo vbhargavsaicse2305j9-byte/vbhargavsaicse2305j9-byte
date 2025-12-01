@@ -1,0 +1,159 @@
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Registration Form</title>
+		<style>
+			:root{--bg:#f4f7fb;--card:#ffffff;--accent:#4f46e5;--muted:#6b7280}
+			*{box-sizing:border-box}
+			body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); margin:0; color:#111}
+			.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:3rem}
+			.card{background:var(--card);max-width:860px;width:100%;border-radius:12px;box-shadow:0 8px 30px rgba(15,23,42,.08);overflow:hidden;display:grid;grid-template-columns:1fr;}
+			@media(min-width:900px){.card{grid-template-columns:380px 1fr}}
+			.hero{background:linear-gradient(180deg, rgba(79,70,229,.08), transparent);padding:28px 24px}
+			.hero h2{margin:0 0 8px;font-size:20px;color:var(--accent)}
+			.hero p{margin:0;color:var(--muted);font-size:13px}
+			.form-area{padding:28px 24px}
+			form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+			.full{grid-column:1/-1}
+			label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+			input[type=text],input[type=email],input[type=password],input[type=tel],select,textarea,input[type=date]{width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;font-size:14px}
+			textarea{min-height:90px;resize:vertical}
+			.row{display:flex;gap:12px}
+			.gender{display:flex;gap:12px;align-items:center}
+			.actions{display:flex;gap:12px;align-items:center;margin-top:12px}
+			button{padding:10px 14px;border-radius:8px;border:0;cursor:pointer;font-weight:600}
+			.btn-primary{background:var(--accent);color:#fff}
+			.btn-muted{background:#eef2ff;color:var(--accent)}
+			.small{font-size:13px;color:var(--muted)}
+			.error{color:#dc2626;font-size:13px;margin-top:6px}
+			.note{font-size:12px;color:var(--muted);margin-top:6px}
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<div class="card" role="region" aria-label="Registration form">
+				<div class="hero">
+					<h2>Create your account</h2>
+					<p>Join us — it's quick and easy. Provide the details below to register.</p>
+				</div>
+				<div class="form-area">
+					<form id="registrationForm" novalidate>
+						<div>
+							<label for="firstName">First name</label>
+							<input id="firstName" name="firstName" type="text" required placeholder="Jane" />
+						</div>
+						<div>
+							<label for="lastName">Last name</label>
+							<input id="lastName" name="lastName" type="text" required placeholder="Doe" />
+						</div>
+
+						<div class="full">
+							<label for="email">Email address</label>
+							<input id="email" name="email" type="email" required placeholder="you@example.com" />
+						</div>
+
+						<div>
+							<label for="password">Password</label>
+							<input id="password" name="password" type="password" required minlength="8" placeholder="At least 8 characters" />
+						</div>
+						<div>
+							<label for="confirmPassword">Confirm password</label>
+							<input id="confirmPassword" name="confirmPassword" type="password" required minlength="8" placeholder="Repeat password" />
+						</div>
+
+						<div>
+							<label for="dob">Date of birth</label>
+							<input id="dob" name="dob" type="date" />
+						</div>
+						<div>
+							<label for="phone">Phone</label>
+							<input id="phone" name="phone" type="tel" placeholder="+1 555 555 5555" />
+						</div>
+
+						<div class="full">
+							<label>Gender</label>
+							<div class="gender" role="radiogroup" aria-label="Gender">
+								<label><input type="radio" name="gender" value="female" /> Female</label>
+								<label><input type="radio" name="gender" value="male" /> Male</label>
+								<label><input type="radio" name="gender" value="other" /> Other</label>
+							</div>
+						</div>
+
+						<div class="full">
+							<label for="country">Country</label>
+							<select id="country" name="country">
+								<option value="">Select country</option>
+								<option>United States</option>
+								<option>Canada</option>
+								<option>United Kingdom</option>
+								<option>India</option>
+								<option>Australia</option>
+							</select>
+						</div>
+
+						<div class="full">
+							<label for="address">Address</label>
+							<textarea id="address" name="address" placeholder="Street, City, State / Province"></textarea>
+						</div>
+
+						<div class="full">
+							<label><input id="terms" name="terms" type="checkbox" required /> I agree to the Terms and Privacy Policy</label>
+						</div>
+
+						<div class="full actions">
+							<button type="submit" class="btn-primary">Register</button>
+							<button type="reset" class="btn-muted" type="button">Reset</button>
+							<div class="note">Already have an account? <a href="#">Sign in</a></div>
+						</div>
+
+						<div id="formError" class="error full" aria-live="polite" style="display:none"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			(function(){
+				const form = document.getElementById('registrationForm');
+				const pwd = document.getElementById('password');
+				const cpwd = document.getElementById('confirmPassword');
+				const errEl = document.getElementById('formError');
+
+				function showError(msg){ errEl.textContent = msg; errEl.style.display = msg ? 'block' : 'none'; }
+
+				form.addEventListener('submit', function(e){
+					e.preventDefault();
+					showError('');
+
+					// basic constraint validation
+					if(!form.checkValidity()){
+						showError('Please fill in required fields correctly.');
+						return;
+					}
+
+					if(pwd.value !== cpwd.value){
+						showError('Passwords do not match.');
+						cpwd.focus();
+						return;
+					}
+
+					// simple email pattern check (HTML5 also validates)
+					const email = document.getElementById('email').value;
+					const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+					if(email && !emailPattern.test(email)){
+						showError('Please enter a valid email address.');
+						return;
+					}
+
+					// If all good, you can send data to server via fetch or show success
+					// For now, just show success message.
+					alert('Registration submitted — replace alert with real submit logic.');
+					form.reset();
+				});
+			})();
+		</script>
+	</body>
+</html>
